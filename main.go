@@ -17,7 +17,7 @@ func (v *Validator) Validate(i interface{}) error {
 
 func main() {
 	db := database.New()
-	db.AutoMigrate()
+	database.AutoMigrate(db)
 	h := handler.New(db)
 	r := router.New()
 
