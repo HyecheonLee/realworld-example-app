@@ -1,10 +1,10 @@
 package handler_test
 
 import (
-	"fmt"
 	"github.com/hyecheonlee/realworld-example-app/models"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	"log"
 	"os"
 	"testing"
 )
@@ -12,17 +12,16 @@ import (
 var db *gorm.DB
 
 func TestMain(m *testing.M) {
-	db = testDB()
-	AutoMigrate()
-	exitVal := m.Run()
-	dropTestDB(db)
-	os.Exit(exitVal)
+	setup()
+	code := m.Run()
+	tearDown()
+	os.Exit(code)
 }
 
 func testDB() *gorm.DB {
 	db, err := gorm.Open("sqlite3", "./../realworld_test.db")
 	if err != nil {
-		fmt.Println("db err: ", err)
+		log.Fatal(err)
 	}
 	db.DB().SetMaxIdleConns(3)
 	db.LogMode(true)
@@ -30,10 +29,43 @@ func testDB() *gorm.DB {
 }
 
 func AutoMigrate() {
-	db.AutoMigrate(&models.User{})
+	if err := db.AutoMigrate(&models.User{}).Error; err != nil {
+		log.Fatal(err)
+	}
 }
-func dropTestDB(db *gorm.DB) error {
-	db.Close()
-	err := os.Remove("./../realworld_test.db")
-	return err
+
+func dropTestDB() {
+	_ = db.Close()
+	if err := os.Remove("./../realworld_test.db"); err != nil {
+		log.Fatal(err)
+	}
+}
+func authHeader(token string) string {
+	return "Token " + token
+}
+func setup() {
+	db = testDB()
+	AutoMigrate()
+	loadFixtures()
+}
+func tearDown() {
+	dropTestDB()
+}
+func loadFixtures() error {
+	bio := "user1 bio"
+	image := "http://realworld.io/user1.jpg"
+	u := models.User{
+		Username: "user1",
+		Email:    "user1@realworld.io",
+		Bio:      &bio,
+		Image:    &image,
+	}
+
+	if err := u.HashPassword("secret"); err != nil {
+		return err
+	}
+	if err := db.Create(&u).Error; err != nil {
+		return nil
+	}
+	return nil
 }

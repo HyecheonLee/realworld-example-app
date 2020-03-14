@@ -1,12 +1,13 @@
 package handler
 
 import (
-	"github.com/hyecheonlee/realworld-example-app/middleware"
+	"github.com/hyecheonlee/realworld-example-app/router/middleware"
+	"github.com/hyecheonlee/realworld-example-app/utils"
 	"github.com/labstack/echo"
 )
 
 func (h *Handler) RegisterRoutes(e *echo.Echo) {
-	jwtMiddleware := middleware.JWT(JWTSecret)
+	jwtMiddleware := middleware.JWT(utils.JWTSecret)
 
 	v1 := e.Group("/api")
 	guestUsers := v1.Group("/users")
@@ -30,9 +31,9 @@ func (h *Handler) RegisterRoutes(e *echo.Echo) {
 				}
 				return false
 			},
-			SigningKey: JWTSecret,
-		}))
-
+			SigningKey: utils.JWTSecret,
+		},
+	))
 	articles.POST("", h.CreateArticle)
 	articles.GET("/feed", h.Feed)
 	articles.PUT("/:slug", h.UpdateArticle)
