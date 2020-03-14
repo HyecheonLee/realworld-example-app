@@ -18,5 +18,11 @@ func New() *gorm.DB {
 }
 
 func AutoMigrate(db *gorm.DB) {
-	db.AutoMigrate(&models.User{})
+	db.AutoMigrate(
+		&models.User{},
+		&models.Follow{},
+		&models.Article{},
+		&models.Comment{},
+		&models.Tag{},
+	)
 }
