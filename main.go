@@ -1,16 +1,19 @@
 package main
 
 import (
-	"github.com/hyecheonlee/realworld-example-app/database"
-	"github.com/hyecheonlee/realworld-example-app/handler"
+	"github.com/hyecheonlee/realworld-example-app/db"
 	"github.com/hyecheonlee/realworld-example-app/router"
+	"github.com/hyecheonlee/realworld-example-app/store"
 )
 
 func main() {
-	db := database.New()
-	database.AutoMigrate(db)
-	h := handler.New(db)
 	r := router.New()
-	h.RegisterRoutes(r)
+	v1 := r.Group("/api")
+
+	d := db.New()
+	db.AutoMigrate(d)
+	us := store.NewUserStore(d)
+	as := store.NewArticleStore(d)
+
 	r.Logger.Fatal(r.Start("127.0.0.1:1323"))
 }
