@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/hyecheonlee/realworld-example-app/db"
+	"github.com/hyecheonlee/realworld-example-app/handler"
 	"github.com/hyecheonlee/realworld-example-app/router"
 	"github.com/hyecheonlee/realworld-example-app/store"
 )
@@ -14,6 +15,7 @@ func main() {
 	db.AutoMigrate(d)
 	us := store.NewUserStore(d)
 	as := store.NewArticleStore(d)
+	h := handler.NewHandler(us, as)
 
 	r.Logger.Fatal(r.Start("127.0.0.1:1323"))
 }
