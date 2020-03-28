@@ -13,7 +13,7 @@ type userUpdateRequest struct {
 		Password string `json:"password"`
 		Bio      string `json:"bio"`
 		Image    string `json:"image"`
-	}
+	} `json:"user"`
 }
 
 func newUserUpdateRequest() *userUpdateRequest {

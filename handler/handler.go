@@ -15,5 +15,4 @@ func NewHandler(us user.Store, as article.Store) *Handler {
 		userStore:    us,
 		articleStore: as,
 	}
-
 }
